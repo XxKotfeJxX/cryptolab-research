@@ -2,12 +2,29 @@
 #include "core/utf8.hpp"
 #include <algorithm>
 #include <iomanip>
+#include <locale>
 #include <sstream>
 #include <vector>
 
 namespace crypto::viz {
+namespace {
+std::string escape_xml(std::string_view value) {
+    std::string result;
+    for (const char ch : value) {
+        switch (ch) {
+        case '&': result += "&amp;"; break;
+        case '<': result += "&lt;"; break;
+        case '>': result += "&gt;"; break;
+        case '"': result += "&quot;"; break;
+        case '\'': result += "&apos;"; break;
+        default: result.push_back(ch); break;
+        }
+    }
+    return result;
+}
+}
 std::string frequency_svg(std::u32string_view before, std::u32string_view after,
-                          const core::Alphabet& alphabet) {
+                          const core::Alphabet& alphabet, std::string_view source) {
     const auto n = alphabet.upper.size();
     std::vector<std::size_t> left(n), right(n);
     std::size_t left_total = 0, right_total = 0;
@@ -22,9 +39,11 @@ std::string frequency_svg(std::u32string_view before, std::u32string_view after,
     }
     if (maximum == 0) maximum = 1;
     std::ostringstream out;
+    out.imbue(std::locale::classic());
     out << std::fixed << std::setprecision(2);
     out << "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" << width << "\" height=\"" << height
         << "\" viewBox=\"0 0 " << width << ' ' << height << "\">\n"
+        << "<desc>Джерело даних: " << escape_xml(source) << "; метрика: частка літер, %</desc>\n"
         << "<rect width=\"100%\" height=\"100%\" fill=\"#fff\"/>\n"
         << "<text x=\"52\" y=\"28\" font-size=\"16\" fill=\"#111\">Частка кожної літери, %</text>\n"
         << "<rect x=\"52\" y=\"43\" width=\"12\" height=\"12\" fill=\"#277da1\"/>"

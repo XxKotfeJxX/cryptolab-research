@@ -1,12 +1,13 @@
 #include "classic/caesar.hpp"
-#include <stdexcept>
+#include "core/error.hpp"
 
 namespace crypto::classic {
 std::u32string caesar(std::u32string_view input, const core::Alphabet& alphabet,
                       long long shift, bool decrypt, InputPolicy policy,
                       const StepCallback& step) {
     const auto size = alphabet.upper.size();
-    if (size == 0 || size != alphabet.lower.size()) throw std::invalid_argument("Невірна абетка");
+    if (size == 0 || size != alphabet.lower.size())
+        throw core::InputError(core::ErrorCode::invalid_alphabet, "Невірна абетка");
     // Modulo first: avoiding negation overflow for LLONG_MIN.
     const auto mod = static_cast<long long>(size);
     const auto forward = (shift % mod + mod) % mod;
@@ -17,7 +18,8 @@ std::u32string caesar(std::u32string_view input, const core::Alphabet& alphabet,
         const auto index = alphabet.index(input[i]);
         if (index == core::not_found) {
             if (policy == InputPolicy::strict)
-                throw std::invalid_argument("Символ поза абеткою на позиції " + std::to_string(i));
+                throw core::InputError(core::ErrorCode::invalid_character,
+                                       "Символ поза абеткою на позиції " + std::to_string(i));
             output.push_back(input[i]);
             continue;
         }

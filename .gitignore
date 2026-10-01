@@ -1,3 +1,6 @@
 build/
+build-debug/
 *.obj
 *.o
+__pycache__/
+*.pyc
