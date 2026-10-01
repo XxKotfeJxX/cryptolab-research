@@ -2,6 +2,12 @@
 
 Початок етапу 5. Наразі реалізовано навчальні прототипи Цезаря, моноалфавітної заміни, Віженера та Гілла 3×3, спільний SHA-256 і власний графік частот SVG. Решта методів реєстру — заплановані, **не реалізовані**. Це навчальний код, а не засіб захисту секретів.
 
+## Навігація дослідження
+
+- [ТЗ етапу 5](docs/SPEC_STAGE5.md) і [зафіксовані рішення](DECISIONS.md).
+- [Протокол корпусу](docs/research/etap_4_korpus_protokol.md), [картка перевірки](docs/corpus_stage4.md) та [незмінний ZIP-архів](etap_4_korpus.zip).
+- [Стан 30 позицій](STATUS.md), профілі [Цезаря](docs/profiles/caesar.md), [заміни](docs/profiles/substitution.md), [Віженера](docs/profiles/vigenere.md), [Гілла](docs/profiles/hill.md) і [збірка та тести](#збірка).
+
 ## Збірка
 
 Потрібен C++20. Без CMake і сторонніх бібліотек.
@@ -11,6 +17,9 @@ Linux/macOS (з кореня проєкту):
 ```sh
 sh scripts/build_gcc.sh
 ./build/tests
+python3 tests/test_cli.py ./build/cryptolab
+python3 tests/test_corpus.py ./etap_4_korpus.zip ./build/cryptolab
+python3 tests/test_docs_links.py
 ```
 
 Windows, Developer Command Prompt for Visual Studio:
@@ -18,6 +27,9 @@ Windows, Developer Command Prompt for Visual Studio:
 ```bat
 scripts\build_msvc.bat
 build\tests.exe
+python tests\test_cli.py build\cryptolab.exe
+python tests\test_corpus.py etap_4_korpus.zip build\cryptolab.exe
+python tests\test_docs_links.py
 ```
 
 Windows, PowerShell із MinGW `g++` у `PATH`:
@@ -26,9 +38,11 @@ Windows, PowerShell із MinGW `g++` у `PATH`:
 .\scripts\build_mingw.ps1
 .\build\tests.exe
 python tests\test_cli.py build\cryptolab.exe
+python tests\test_corpus.py etap_4_korpus.zip build\cryptolab.exe
+python tests\test_docs_links.py
 ```
 
-Інтеграційний тест CLI потребує Python 3; робочий C++ код його не використовує.
+Інтеграційні тести потребують Python 3.11+; робочий C++ код його не використовує. Ті самі перевірки запускає [CI для Linux і Windows MSVC](.github/workflows/ci.yml).
 
 Виклики CLI:
 
@@ -65,6 +79,16 @@ python tests\test_corpus.py .\etap_4_korpus.zip .\build\cryptolab.exe
 `--steps N` показує перші N **зашифрованих літер** у консолі; `--steps all` — усі (на великому тексті буде величезний вивід). `--trace FILE` разом із `--steps` записує ті самі кроки у файл. Без `--steps` трасування вимкнено. `--chart` зберігає SVG із двома рядами частот вхідних і вихідних літер, одиницями та джерелом даних; графік пише власний код. `--policy strict` відхиляє сторонні символи, `--policy passthrough` зберігає їх без зміни. Вхід і вихід — UTF-8; файли з етапу 4 `derived/<id>/letters.txt` підходять до `strict`. Вихід записується через тимчасовий файл у тому самому каталозі та перейменування після перевірки входу; псевдоніми вхідного шляху відхиляються.
 
 Цезар не розрізняє регістр у цьому першому профілі: малі літери переводяться у великі, а вихід завжди великими. Жодної прихованої нормалізації Unicode немає; для NFC користуйтеся корпусом етапу 4. Після додавання кожного шифру його точний профіль, вектори та статус заносимо у `STATUS.md`.
+
+## Як додавати наступний метод
+
+1. Зафіксувати `docs/profiles/<id>.md`: редакцію специфікації, параметри, формати, обмеження та джерела точних векторів.
+2. Написати власні спільні компоненти й модуль методу; каталог створювати разом із кодом.
+3. Додати незалежний точний вектор, негативні та граничні тести.
+4. Підключити CLI, осмислений корпусний запуск, трасування та потрібні власні SVG-графіки.
+5. Записати фактично виконані перевірки й відкриті обмеження у [STATUS.md](STATUS.md).
+
+Критерії закриття всіх 30 позицій наведено у [ТЗ етапу 5](docs/SPEC_STAGE5.md). Наявність чотирьох класичних прототипів не закриває етап.
 
 ## Межі першої версії
 
