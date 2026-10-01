@@ -42,7 +42,8 @@ with tempfile.TemporaryDirectory(prefix="cryptolab-corpus-test-") as folder:
     assert record["output_sha256"] == hashlib.sha256(output.read_bytes()).hexdigest()
     assert record["profile_id"] == "position-16-card-19-caesar-en-v1"
     assert record["public_test_key_id"] == "caesar-shift-3-demo"
-    assert record["parameters"] == {"alphabet": "en", "shift": "3"}
+    assert record["parameters"] == {"alphabet": "en"}
+    assert '"shift":' not in journal.read_text(encoding="utf-8")
     version = subprocess.run(["git", "rev-parse", "HEAD"], cwd=tool.parents[1],
                              capture_output=True, text=True, check=False)
     if version.returncode == 0:

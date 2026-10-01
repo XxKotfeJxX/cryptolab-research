@@ -221,6 +221,8 @@ def run_verified(args, artifacts, data_by_path, manifest_sha):
         raise CorpusError("A hex display is not a binary input artifact")
     if args.public_test_key_id and not PUBLIC_KEY_ID.fullmatch(args.public_test_key_id):
         raise CorpusError("Public test key ID must be 1–80 ASCII identifier characters")
+    if algorithm == "sha256" and args.public_test_key_id:
+        raise CorpusError("SHA-256 has no test key")
 
     if algorithm in CLASSIC:
         alphabet = next((forwarded[index + 1] for index, flag in enumerate(forwarded[:-1])
@@ -260,7 +262,7 @@ def run_verified(args, artifacts, data_by_path, manifest_sha):
 
     public_params = {}
     for index, flag in enumerate(forwarded):
-        if flag in ("--alphabet", "--shift", "--policy") and index + 1 < len(forwarded):
+        if flag in ("--alphabet", "--policy") and index + 1 < len(forwarded):
             public_params[flag[2:]] = forwarded[index + 1]
     record = {
         "schema": 1,
