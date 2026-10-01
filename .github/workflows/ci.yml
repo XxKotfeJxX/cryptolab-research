@@ -1,0 +1,43 @@
+name: C++20 and corpus checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Build with C++20
+        run: sh scripts/build_gcc.sh
+      - name: Unit tests
+        run: ./build/tests
+      - name: CLI tests
+        run: python tests/test_cli.py ./build/cryptolab
+      - name: Corpus integration tests
+        run: python tests/test_corpus.py ./etap_4_korpus.zip ./build/cryptolab
+
+  windows-msvc:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Build with MSVC C++20
+        shell: cmd
+        run: scripts\build_msvc.bat
+      - name: Unit tests
+        shell: cmd
+        run: build\tests.exe
+      - name: CLI tests
+        shell: cmd
+        run: python tests\test_cli.py build\cryptolab.exe
+      - name: Corpus integration tests
+        shell: cmd
+        run: python tests\test_corpus.py etap_4_korpus.zip build\cryptolab.exe

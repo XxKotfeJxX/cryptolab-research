@@ -29,6 +29,7 @@ with tempfile.TemporaryDirectory(prefix="cryptolab-corpus-test-") as folder:
     journal = root / "runs.jsonl"
     result = invoke("run", "--archive", archive, "--artifact", artifact,
                     "--cryptolab", executable, "--out", output, "--journal", journal,
+                    "--public-test-key-id", "caesar-shift-3-demo",
                     "--", "caesar", "encrypt", "--alphabet", "en", "--shift", "3")
     assert result.returncode == 0, result.stderr
     with zipfile.ZipFile(archive) as package:
@@ -38,7 +39,15 @@ with tempfile.TemporaryDirectory(prefix="cryptolab-corpus-test-") as folder:
     record = json.loads(journal.read_text(encoding="utf-8").strip())
     assert record["artifact"] == artifact and record["input_bytes"] == 16
     assert record["output_bytes"] == 16 and record["status"] == "success"
+    assert record["output_sha256"] == hashlib.sha256(output.read_bytes()).hexdigest()
+    assert record["profile_id"] == "position-16-card-19-caesar-en-v1"
+    assert record["public_test_key_id"] == "caesar-shift-3-demo"
     assert record["parameters"] == {"alphabet": "en", "shift": "3"}
+    version = subprocess.run(["git", "rev-parse", "HEAD"], cwd=tool.parents[1],
+                             capture_output=True, text=True, check=False)
+    if version.returncode == 0:
+        assert record["code_version"]["git_commit"] == version.stdout.strip()
+        assert record["code_version"]["tracked_changes"] in (True, False)
 
     byte_artifact = "derived/uk_nechui_1879/utf8_at_most_4096.bin"
     digest_out = root / "digest.bin"
@@ -51,6 +60,10 @@ with tempfile.TemporaryDirectory(prefix="cryptolab-corpus-test-") as folder:
         manifest = json.loads(package.read("etap_4_korpus/output/manifest.json"))
     declared = next(item["sha256"] for item in manifest["artifacts"] if item["path"] == byte_artifact)
     assert digest_out.read_bytes().hex() == declared == hashlib.sha256(byte_data).hexdigest()
+    hash_record = json.loads(journal.read_text(encoding="utf-8").splitlines()[1])
+    assert hash_record["profile_id"] == "sha256-fips180-4-2015"
+    assert hash_record["output_sha256"] == hashlib.sha256(digest_out.read_bytes()).hexdigest()
+    assert "public_test_key_id" not in hash_record
 
     result = invoke("run", "--archive", archive, "--artifact", artifact,
                     "--cryptolab", executable, "--out", output, "--journal", output,

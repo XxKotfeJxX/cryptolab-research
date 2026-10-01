@@ -35,6 +35,13 @@ MAX_ENTRY = 64 * 1024 * 1024
 MAX_TOTAL = 256 * 1024 * 1024
 HEX256 = re.compile(r"[0-9a-f]{64}\Z")
 CLASSIC = {"caesar", "substitution", "vigenere", "hill3"}
+CLASSIC_PROFILE = {
+    "caesar": (16, 19),
+    "substitution": (17, 20),
+    "vigenere": (18, 21),
+    "hill3": (19, 22),
+}
+PUBLIC_KEY_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,79}\Z")
 
 
 class CorpusError(Exception):
@@ -177,6 +184,23 @@ def file_sha256(path: Path) -> str:
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
+def code_version():
+    project = Path(__file__).resolve().parents[1]
+    try:
+        commit = subprocess.run(["git", "rev-parse", "--verify", "HEAD"], cwd=project,
+                                capture_output=True, text=True, check=False)
+        value = commit.stdout.strip()
+        if commit.returncode != 0 or not re.fullmatch(r"[0-9a-f]{40,64}", value):
+            return None
+        dirty = subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"], cwd=project,
+                               capture_output=True, text=True, check=False)
+        if dirty.returncode != 0:
+            return None
+        return {"git_commit": value, "tracked_changes": bool(dirty.stdout)}
+    except OSError:
+        return None
+
+
 def run_verified(args, artifacts, data_by_path, manifest_sha):
     item = artifacts.get(args.artifact)
     if item is None:
@@ -195,6 +219,18 @@ def run_verified(args, artifacts, data_by_path, manifest_sha):
         raise CorpusError("Classic algorithms require a letters artifact")
     if item["view"] == "hex_display_only":
         raise CorpusError("A hex display is not a binary input artifact")
+    if args.public_test_key_id and not PUBLIC_KEY_ID.fullmatch(args.public_test_key_id):
+        raise CorpusError("Public test key ID must be 1–80 ASCII identifier characters")
+
+    if algorithm in CLASSIC:
+        alphabet = next((forwarded[index + 1] for index, flag in enumerate(forwarded[:-1])
+                         if flag == "--alphabet"), None)
+        if alphabet not in {"en", "uk"}:
+            raise CorpusError("Classic corpus runs require --alphabet en or uk")
+        position, card = CLASSIC_PROFILE[algorithm]
+        profile_id = f"position-{position}-card-{card}-{algorithm}-{alphabet}-v1"
+    else:
+        profile_id = "sha256-fips180-4-2015"
 
     archive = args.archive.resolve()
     output = args.out.resolve()
@@ -231,6 +267,7 @@ def run_verified(args, artifacts, data_by_path, manifest_sha):
         "utc": dt.datetime.now(dt.timezone.utc).isoformat(),
         "algorithm": algorithm,
         "operation": operation,
+        "profile_id": profile_id,
         "implementation_sha256": executable_sha,
         "archive_sha256": archive_sha,
         "manifest_sha256": manifest_sha,
@@ -245,8 +282,14 @@ def run_verified(args, artifacts, data_by_path, manifest_sha):
     }
     if "start_codepoint" in item:
         record["start_codepoint"] = item["start_codepoint"]
+    if args.public_test_key_id:
+        record["public_test_key_id"] = args.public_test_key_id
+    version = code_version()
+    if version is not None:
+        record["code_version"] = version
     if result.returncode == 0:
         record["output_bytes"] = output.stat().st_size
+        record["output_sha256"] = file_sha256(output)
     with journal.open("a", encoding="utf-8") as stream:
         stream.write(json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n")
     print(f"Corpus {item['origin']} / {args.artifact}: {item['bytes']} bytes, SHA-256 {item['sha256']}")
@@ -264,6 +307,7 @@ def main():
     run.add_argument("--cryptolab", required=True, type=Path)
     run.add_argument("--out", required=True, type=Path)
     run.add_argument("--journal", required=True, type=Path)
+    run.add_argument("--public-test-key-id", help="identifier of a documented, non-secret test key")
     run.add_argument("cryptolab_args", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     try:
