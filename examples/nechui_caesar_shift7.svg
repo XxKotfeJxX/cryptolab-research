@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="380" viewBox="0 0 1024 380">
+<rect width="100%" height="100%" fill="#fff"/>
+<text x="52" y="28" font-size="16" fill="#111">Частка кожної літери, %</text>
+<rect x="52" y="43" width="12" height="12" fill="#277da1"/><text x="70" y="54" font-size="12">Вхід</text><rect x="125" y="43" width="12" height="12" fill="#f3722c"/><text x="143" y="54" font-size="12">Вихід</text>
+<line x1="45" y1="315" x2="1004" y2="315" stroke="#444"/>
+<rect x="53" y="95.00" width="10" height="220.00" fill="#277da1"/>
+<rect x="64" y="302.21" width="10" height="12.79" fill="#f3722c"/>
+<text x="63" y="335" text-anchor="middle" font-size="12">А</text>
+<rect x="81" y="273.92" width="10" height="41.08" fill="#277da1"/>
+<rect x="92" y="285.45" width="10" height="29.55" fill="#f3722c"/>
+<text x="91" y="335" text-anchor="middle" font-size="12">Б</text>
+<rect x="109" y="201.81" width="10" height="113.19" fill="#277da1"/>
+<rect x="120" y="288.48" width="10" height="26.52" fill="#f3722c"/>
+<text x="119" y="335" text-anchor="middle" font-size="12">В</text>
+<rect x="137" y="279.68" width="10" height="35.32" fill="#277da1"/>
+<rect x="148" y="305.10" width="10" height="9.90" fill="#f3722c"/>
+<text x="147" y="335" text-anchor="middle" font-size="12">Г</text>
+<rect x="165" y="315.00" width="10" height="0.00" fill="#277da1"/>
+<rect x="176" y="287.27" width="10" height="27.73" fill="#f3722c"/>
+<text x="175" y="335" text-anchor="middle" font-size="12">Ґ</text>
+<rect x="193" y="247.03" width="10" height="67.97" fill="#277da1"/>
+<rect x="204" y="299.78" width="10" height="15.22" fill="#f3722c"/>
+<text x="203" y="335" text-anchor="middle" font-size="12">Д</text>
+<rect x="221" y="226.86" width="10" height="88.14" fill="#277da1"/>
+<rect x="232" y="273.07" width="10" height="41.93" fill="#f3722c"/>
+<text x="231" y="335" text-anchor="middle" font-size="12">Е</text>
+<rect x="249" y="309.98" width="10" height="5.02" fill="#277da1"/>
+<rect x="260" y="95.00" width="10" height="220.00" fill="#f3722c"/>
+<text x="259" y="335" text-anchor="middle" font-size="12">Є</text>
+<rect x="277" y="299.60" width="10" height="15.40" fill="#277da1"/>
+<rect x="288" y="273.92" width="10" height="41.08" fill="#f3722c"/>
+<text x="287" y="335" text-anchor="middle" font-size="12">Ж</text>
+<rect x="305" y="274.83" width="10" height="40.17" fill="#277da1"/>
+<rect x="316" y="201.81" width="10" height="113.19" fill="#f3722c"/>
+<text x="315" y="335" text-anchor="middle" font-size="12">З</text>
+<rect x="333" y="169.05" width="10" height="145.95" fill="#277da1"/>
+<rect x="344" y="279.68" width="10" height="35.32" fill="#f3722c"/>
+<text x="343" y="335" text-anchor="middle" font-size="12">И</text>
+<rect x="361" y="219.49" width="10" height="95.51" fill="#277da1"/>
+<rect x="372" y="315.00" width="10" height="0.00" fill="#f3722c"/>
+<text x="371" y="335" text-anchor="middle" font-size="12">І</text>
+<rect x="389" y="314.98" width="10" height="0.02" fill="#277da1"/>
+<rect x="400" y="247.03" width="10" height="67.97" fill="#f3722c"/>
+<text x="399" y="335" text-anchor="middle" font-size="12">Ї</text>
+<rect x="417" y="285.75" width="10" height="29.25" fill="#277da1"/>
+<rect x="428" y="226.86" width="10" height="88.14" fill="#f3722c"/>
+<text x="427" y="335" text-anchor="middle" font-size="12">Й</text>
+<rect x="445" y="227.05" width="10" height="87.95" fill="#277da1"/>
+<rect x="456" y="309.98" width="10" height="5.02" fill="#f3722c"/>
+<text x="455" y="335" text-anchor="middle" font-size="12">К</text>
+<rect x="473" y="217.40" width="10" height="97.60" fill="#277da1"/>
+<rect x="484" y="299.60" width="10" height="15.40" fill="#f3722c"/>
+<text x="483" y="335" text-anchor="middle" font-size="12">Л</text>
+<rect x="501" y="255.58" width="10" height="59.42" fill="#277da1"/>
+<rect x="512" y="274.83" width="10" height="40.17" fill="#f3722c"/>
+<text x="511" y="335" text-anchor="middle" font-size="12">М</text>
+<rect x="529" y="215.30" width="10" height="99.70" fill="#277da1"/>
+<rect x="540" y="169.05" width="10" height="145.95" fill="#f3722c"/>
+<text x="539" y="335" text-anchor="middle" font-size="12">Н</text>
+<rect x="557" y="127.79" width="10" height="187.21" fill="#277da1"/>
+<rect x="568" y="219.49" width="10" height="95.51" fill="#f3722c"/>
+<text x="567" y="335" text-anchor="middle" font-size="12">О</text>
+<rect x="585" y="257.79" width="10" height="57.21" fill="#277da1"/>
+<rect x="596" y="314.98" width="10" height="0.02" fill="#f3722c"/>
+<text x="595" y="335" text-anchor="middle" font-size="12">П</text>
+<rect x="613" y="225.73" width="10" height="89.27" fill="#277da1"/>
+<rect x="624" y="285.75" width="10" height="29.25" fill="#f3722c"/>
+<text x="623" y="335" text-anchor="middle" font-size="12">Р</text>
+<rect x="641" y="227.05" width="10" height="87.95" fill="#277da1"/>
+<rect x="652" y="227.05" width="10" height="87.95" fill="#f3722c"/>
+<text x="651" y="335" text-anchor="middle" font-size="12">С</text>
+<rect x="669" y="220.46" width="10" height="94.54" fill="#277da1"/>
+<rect x="680" y="217.40" width="10" height="97.60" fill="#f3722c"/>
+<text x="679" y="335" text-anchor="middle" font-size="12">Т</text>
+<rect x="697" y="252.23" width="10" height="62.77" fill="#277da1"/>
+<rect x="708" y="255.58" width="10" height="59.42" fill="#f3722c"/>
+<text x="707" y="335" text-anchor="middle" font-size="12">У</text>
+<rect x="725" y="314.89" width="10" height="0.11" fill="#277da1"/>
+<rect x="736" y="215.30" width="10" height="99.70" fill="#f3722c"/>
+<text x="735" y="335" text-anchor="middle" font-size="12">Ф</text>
+<rect x="753" y="288.10" width="10" height="26.90" fill="#277da1"/>
+<rect x="764" y="127.79" width="10" height="187.21" fill="#f3722c"/>
+<text x="763" y="335" text-anchor="middle" font-size="12">Х</text>
+<rect x="781" y="302.21" width="10" height="12.79" fill="#277da1"/>
+<rect x="792" y="257.79" width="10" height="57.21" fill="#f3722c"/>
+<text x="791" y="335" text-anchor="middle" font-size="12">Ц</text>
+<rect x="809" y="285.45" width="10" height="29.55" fill="#277da1"/>
+<rect x="820" y="225.73" width="10" height="89.27" fill="#f3722c"/>
+<text x="819" y="335" text-anchor="middle" font-size="12">Ч</text>
+<rect x="837" y="288.48" width="10" height="26.52" fill="#277da1"/>
+<rect x="848" y="227.05" width="10" height="87.95" fill="#f3722c"/>
+<text x="847" y="335" text-anchor="middle" font-size="12">Ш</text>
+<rect x="865" y="305.10" width="10" height="9.90" fill="#277da1"/>
+<rect x="876" y="220.46" width="10" height="94.54" fill="#f3722c"/>
+<text x="875" y="335" text-anchor="middle" font-size="12">Щ</text>
+<rect x="893" y="287.27" width="10" height="27.73" fill="#277da1"/>
+<rect x="904" y="252.23" width="10" height="62.77" fill="#f3722c"/>
+<text x="903" y="335" text-anchor="middle" font-size="12">Ь</text>
+<rect x="921" y="299.78" width="10" height="15.22" fill="#277da1"/>
+<rect x="932" y="314.89" width="10" height="0.11" fill="#f3722c"/>
+<text x="931" y="335" text-anchor="middle" font-size="12">Ю</text>
+<rect x="949" y="273.07" width="10" height="41.93" fill="#277da1"/>
+<rect x="960" y="288.10" width="10" height="26.90" fill="#f3722c"/>
+<text x="959" y="335" text-anchor="middle" font-size="12">Я</text>
+<text x="52" y="365" font-size="12" fill="#555">Вхід: 240294 літер; вихід: 240294 літер; висота нормована за максимумом</text>
+</svg>
