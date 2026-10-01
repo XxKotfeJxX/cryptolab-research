@@ -56,11 +56,11 @@ python tests\test_cli.py build\cryptolab.exe
 
 ```powershell
 python scripts\corpus_stage4.py verify --archive .\etap_4_korpus.zip
-python scripts\corpus_stage4.py run --archive .\etap_4_korpus.zip --artifact derived/en_austen_1342/letters_16_head.txt --cryptolab .\build\cryptolab.exe --out .\build\caesar_corpus.txt --journal .\build\corpus_runs.jsonl -- caesar encrypt --alphabet en --shift 3
+python scripts\corpus_stage4.py run --archive .\etap_4_korpus.zip --artifact derived/en_austen_1342/letters_16_head.txt --cryptolab .\build\cryptolab.exe --out .\build\caesar_corpus.txt --journal .\build\corpus_runs.jsonl --public-test-key-id caesar-shift-3-demo -- caesar encrypt --alphabet en --shift 3
 python tests\test_corpus.py .\etap_4_korpus.zip .\build\cryptolab.exe
 ```
 
-`run` перевіряє маніфест перед запуском, використовує тимчасовий файл для одного артефакту та дописує несекретні метадані до JSONL-журналу. `verify` і `run` потребують Python 3.11+; робоче шифрування залишається у C++.
+`run` перевіряє маніфест перед запуском, використовує тимчасовий файл для одного артефакту та дописує до JSONL-журналу профіль, доступну Git-версію коду, SHA-256 входу й успішного виходу та несекретні параметри. У прикладі `caesar-shift-3-demo` позначає відкритий тестовий зсув 3; журнал зберігає лише цей ID, а не значення ключа чи його відбиток. `verify` і `run` потребують Python 3.11+; робоче шифрування залишається у C++.
 
 `--steps N` показує перші N **зашифрованих літер** у консолі; `--steps all` — усі (на великому тексті буде величезний вивід). `--trace FILE` разом із `--steps` записує ті самі кроки у файл. Без `--steps` трасування вимкнено. `--chart` зберігає SVG із двома рядами частот вхідних і вихідних літер, одиницями та джерелом даних; графік пише власний код. `--policy strict` відхиляє сторонні символи, `--policy passthrough` зберігає їх без зміни. Вхід і вихід — UTF-8; файли з етапу 4 `derived/<id>/letters.txt` підходять до `strict`. Вихід записується через тимчасовий файл у тому самому каталозі та перейменування після перевірки входу; псевдоніми вхідного шляху відхиляються.
 

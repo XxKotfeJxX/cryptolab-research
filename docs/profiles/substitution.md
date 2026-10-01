@@ -1,4 +1,6 @@
-# Довільна моноалфавітна заміна — картка №16
+# Довільна моноалфавітна заміна — позиція №17, картка №20
+
+Ідентифікатори профілів у журналі: `position-17-card-20-substitution-en-v1` і `position-17-card-20-substitution-uk-v1`.
 
 Профіль EN: CMU 15-441, лекція 4 від 2002-09-09, слайд 8: https://www.cs.cmu.edu/~srini/15-441/F02/lectures/Lecture%204.pdf . Джерело задає переставлену 26-літерну абетку `mnbvcxzasdfghjklpoiuytrewq` і приклад `bob. i love you. alice` → `nkn. s gktc wky. mgsbc`. CLI порівнює результат із цим опублікованим прикладом після оголошеної нормалізації регістру.
 

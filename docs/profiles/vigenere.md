@@ -1,4 +1,6 @@
-# Віженер із повторюваним ключем — картка №17
+# Віженер із повторюваним ключем — позиція №18, картка №21
+
+Ідентифікатори профілів у журналі: `position-18-card-21-vigenere-en-v1` і `position-18-card-21-vigenere-uk-v1`.
 
 Профіль EN: Carnegie Mellon University, 15-110 *Principles of Computing*, Unit 12B, лекція 2018-04-24, слайди 9–10: https://www.cs.cmu.edu/~15110-s18/lectures/Unit12PtB.pdf . Опублікований приклад: plaintext `ATTACKATDAWN`, ключ `DECAF`, ciphertext `DXVAHNEVDFZR`. Це конкретна конвенція таблиці: рядок задає літеру ключа, колонка — літеру входу; A має зсув 0.
 
