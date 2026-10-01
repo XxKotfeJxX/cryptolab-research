@@ -4,6 +4,8 @@
 
 ## Навігація дослідження
 
+- **Питання:** як за визначеного сценарію змістовно порівняти криптографічні методи різних класів з урахуванням їхнього призначення, гарантій, витрат і меж застосування показників? [План дослідження](docs/research/plan_kryptohrafichnoho_doslidzhennia.md) описує етапи 0–12.
+- [Реєстр методів](docs/research/etap_2_reiestr_shyfriv.md): 30 незмінних позицій і 27 карток, бо три пари позицій об'єднані в картки (№1+2, №7+15, №9+12). [Бібліографічна матриця](docs/research/etap_3_literatura_matrytsia.md) містить джерела й вектори для карток.
 - [ТЗ етапу 5](docs/SPEC_STAGE5.md) і [зафіксовані рішення](DECISIONS.md).
 - [Протокол корпусу](docs/research/etap_4_korpus_protokol.md), [картка перевірки](docs/corpus_stage4.md) та [незмінний ZIP-архів](etap_4_korpus.zip).
 - [Стан 30 позицій](STATUS.md), профілі [Цезаря](docs/profiles/caesar.md), [заміни](docs/profiles/substitution.md), [Віженера](docs/profiles/vigenere.md), [Гілла](docs/profiles/hill.md) і [збірка та тести](#збірка).
