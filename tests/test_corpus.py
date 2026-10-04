@@ -66,6 +66,33 @@ with tempfile.TemporaryDirectory(prefix="cryptolab-corpus-test-") as folder:
     assert hash_record["output_sha256"] == hashlib.sha256(digest_out.read_bytes()).hexdigest()
     assert "public_test_key_id" not in hash_record
 
+    grille_key = root / "grille_key.txt"
+    grille_key.write_text("0125", encoding="ascii")
+    grille_out = root / "grille.txt"
+    result = invoke("run", "--archive", archive, "--artifact", artifact,
+                    "--cryptolab", executable, "--out", grille_out, "--journal", journal,
+                    "--public-test-key-id", "grille-mask-0125",
+                    "--", "grille", "encrypt", "--alphabet", "en", "--key-file", grille_key)
+    assert result.returncode == 0, result.stderr
+    assert grille_out.read_text(encoding="ascii") == "ILLSGUTREOTARION"
+    grille_record = json.loads(journal.read_text(encoding="utf-8").splitlines()[2])
+    assert grille_record["profile_id"] == "position-28-card-26-grille-en-v1"
+    assert grille_record["public_test_key_id"] == "grille-mask-0125"
+
+    otp_key = root / "otp_public_key.bin"
+    otp_key.write_bytes(bytes([0xA5]) * len(byte_data))
+    otp_out = root / "otp.bin"
+    result = invoke("run", "--archive", archive, "--artifact", byte_artifact,
+                    "--cryptolab", executable, "--out", otp_out, "--journal", journal,
+                    "--public-test-key-id", "otp-fixed-a5-demo",
+                    "--", "otp", "xor", "--key-file", otp_key)
+    assert result.returncode == 0, result.stderr
+    assert otp_out.read_bytes() == bytes(value ^ 0xA5 for value in byte_data)
+    otp_record = json.loads(journal.read_text(encoding="utf-8").splitlines()[3])
+    assert otp_record["profile_id"] == "position-23-card-18-otp-byte-xor-v1"
+    assert otp_record["output_sha256"] == hashlib.sha256(otp_out.read_bytes()).hexdigest()
+    assert "key-file" not in otp_record["parameters"]
+
     result = invoke("run", "--archive", archive, "--artifact", artifact,
                     "--cryptolab", executable, "--out", output, "--journal", output,
                     "--", "caesar", "encrypt", "--alphabet", "en", "--shift", "3")
@@ -94,4 +121,4 @@ with tempfile.TemporaryDirectory(prefix="cryptolab-corpus-test-") as folder:
     assert result.returncode != 0
     assert b"frozen stage-4 corpus" in result.stderr
 
-print("OK: pinned stage-4 manifest, classic/SHA-256 runs, journal, alias and tamper rejection")
+print("OK: pinned stage-4 manifest, classic/byte/SHA-256 runs, journal, alias and tamper rejection")

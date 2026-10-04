@@ -34,13 +34,18 @@ METADATA = {
 MAX_ENTRY = 64 * 1024 * 1024
 MAX_TOTAL = 256 * 1024 * 1024
 HEX256 = re.compile(r"[0-9a-f]{64}\Z")
-CLASSIC = {"caesar", "substitution", "vigenere", "hill3"}
+CLASSIC = {"caesar", "substitution", "vigenere", "hill3", "playfair", "grille", "homophonic", "solitaire"}
 CLASSIC_PROFILE = {
     "caesar": (16, 19),
     "substitution": (17, 20),
     "vigenere": (18, 21),
     "hill3": (19, 22),
+    "playfair": (25, 24),
+    "solitaire": (27, 25),
+    "grille": (28, 26),
+    "homophonic": (29, 27),
 }
+BYTE_METHODS = {"otp", "feistel-demo"}
 PUBLIC_KEY_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,79}\Z")
 
 
@@ -208,15 +213,18 @@ def run_verified(args, artifacts, data_by_path, manifest_sha):
     forwarded = args.cryptolab_args
     if forwarded and forwarded[0] == "--":
         forwarded = forwarded[1:]
-    if len(forwarded) < 2 or forwarded[0] not in CLASSIC | {"sha256"}:
+    if len(forwarded) < 2 or forwarded[0] not in CLASSIC | BYTE_METHODS | {"sha256"}:
         raise CorpusError("Expected a supported cryptolab algorithm and operation")
     algorithm, operation = forwarded[:2]
-    if operation != ("hash" if algorithm == "sha256" else "encrypt") and not (algorithm in CLASSIC and operation == "decrypt"):
+    expected = {"sha256": {"hash"}, "otp": {"xor"}, "feistel-demo": {"encrypt", "decrypt"}}
+    if operation not in expected.get(algorithm, {"encrypt", "decrypt"}):
         raise CorpusError("Unsupported cryptolab operation")
     if any(flag in forwarded for flag in ("--in", "--out")):
         raise CorpusError("The wrapper sets --in and --out itself")
     if algorithm in CLASSIC and item["view"] not in {"classic_letters", "classic_window"}:
         raise CorpusError("Classic algorithms require a letters artifact")
+    if algorithm in BYTE_METHODS and item["view"] not in {"utf8_budget", "control"}:
+        raise CorpusError("Byte methods require a byte-budget or control artifact")
     if item["view"] == "hex_display_only":
         raise CorpusError("A hex display is not a binary input artifact")
     if args.public_test_key_id and not PUBLIC_KEY_ID.fullmatch(args.public_test_key_id):
@@ -229,8 +237,14 @@ def run_verified(args, artifacts, data_by_path, manifest_sha):
                          if flag == "--alphabet"), None)
         if alphabet not in {"en", "uk"}:
             raise CorpusError("Classic corpus runs require --alphabet en or uk")
+        if algorithm in {"playfair", "solitaire"} and alphabet != "en":
+            raise CorpusError("This method has only an English profile")
         position, card = CLASSIC_PROFILE[algorithm]
         profile_id = f"position-{position}-card-{card}-{algorithm}-{alphabet}-v1"
+    elif algorithm == "otp":
+        profile_id = "position-23-card-18-otp-byte-xor-v1"
+    elif algorithm == "feistel-demo":
+        profile_id = "position-20-card-23-feistel-demo-16bit-v1"
     else:
         profile_id = "sha256-fips180-4-2015"
 
