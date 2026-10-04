@@ -1,5 +1,6 @@
 #include "classic/caesar.hpp"
 #include "classic/feistel_demo.hpp"
+#include "classic/grille.hpp"
 #include "classic/hill.hpp"
 #include "classic/playfair.hpp"
 #include "classic/substitution.hpp"
@@ -120,6 +121,13 @@ int main() {
         must_reject([] { crypto::classic::playfair(U"ABC", U"MONARCHY", true); });
         must_reject([] { crypto::classic::playfair(U"A!", U"MONARCHY", false); });
         must_reject([] { crypto::classic::playfair(U"AB", U"", false); });
+        expect(crypto::classic::grille(U"ABCDEFGHIJKLMNOP", en, U"0125", false) ==
+               U"ABCEMDFGNOIHPJKL", "independent grille vector");
+        expect(crypto::classic::grille(U"ABCEMDFGNOIHPJKL", en, U"0125", true) ==
+               U"ABCDEFGHIJKLMNOP", "grille decrypt");
+        must_reject([&] { crypto::classic::grille(U"AB", en, U"0125", false); });
+        must_reject([&] { crypto::classic::grille(U"ABCDEFGHIJKLMNOP", en, U"0000", false); });
+        must_reject([&] { crypto::classic::grille(U"ABCDEFGHIJKLMNOP", en, U"012X", false); });
         const auto svg = crypto::viz::frequency_svg(U"ABBA", U"DEED", en);
         expect(svg.find("<svg") != std::string::npos && svg.find("Вхід: 4 літер") != std::string::npos, "svg counts");
         expect(crypto::viz::frequency_svg(U"A", U"B", en, "a&b<file").find("a&amp;b&lt;file") != std::string::npos,

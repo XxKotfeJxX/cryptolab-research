@@ -6,7 +6,7 @@ $common = @(
     'src/core/files.cpp', 'src/core/sha256.cpp', 'src/core/otp.cpp', 'src/classic/caesar.cpp',
     'src/classic/substitution.cpp', 'src/classic/vigenere.cpp',
     'src/classic/hill.cpp', 'src/classic/feistel_demo.cpp',
-    'src/classic/playfair.cpp', 'src/viz/svg.cpp'
+    'src/classic/playfair.cpp', 'src/classic/grille.cpp', 'src/viz/svg.cpp'
 )
 & g++ @common 'src/app/main.cpp' '-o' 'build/cryptolab.exe'
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
