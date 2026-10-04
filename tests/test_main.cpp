@@ -4,6 +4,7 @@
 #include "classic/homophonic.hpp"
 #include "classic/hill.hpp"
 #include "classic/playfair.hpp"
+#include "classic/solitaire.hpp"
 #include "classic/substitution.hpp"
 #include "classic/vigenere.hpp"
 #include "core/alphabet.hpp"
@@ -138,6 +139,16 @@ int main() {
         must_reject([&] { crypto::classic::homophonic_encrypt(U"A!", en, homophonic_key); });
         must_reject([&] { crypto::classic::homophonic_decrypt(std::string(1, static_cast<char>(255)), en, homophonic_key); });
         must_reject([&] { crypto::classic::homophonic_encrypt(U"A", en, std::string(52, '\0')); });
+        expect(crypto::classic::solitaire(U"AAAAAAAAAA", U"", false) == U"EXKYIZSGEH",
+               "Schneier Solitaire unkeyed vector");
+        expect(crypto::classic::solitaire(U"AAAAAAAAAAAAAAA", U"FOO", false) == U"ITHZUJIWGRFARMW",
+               "Schneier Solitaire FOO vector");
+        expect(crypto::classic::solitaire(U"SOLITAIREX", U"CRYPTONOMICON", false) == U"KIRAKSFJAN",
+               "Schneier Solitaire CRYPTONOMICON vector");
+        expect(crypto::classic::solitaire(U"KIRAKSFJAN", U"CRYPTONOMICON", true) == U"SOLITAIREX",
+               "Solitaire decrypt");
+        must_reject([] { crypto::classic::solitaire(U"A!", U"FOO", false); });
+        must_reject([] { crypto::classic::solitaire(U"A", U"F O O", false); });
         const auto svg = crypto::viz::frequency_svg(U"ABBA", U"DEED", en);
         expect(svg.find("<svg") != std::string::npos && svg.find("Вхід: 4 літер") != std::string::npos, "svg counts");
         expect(crypto::viz::frequency_svg(U"A", U"B", en, "a&b<file").find("a&amp;b&lt;file") != std::string::npos,
