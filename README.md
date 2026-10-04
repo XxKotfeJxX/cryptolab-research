@@ -1,6 +1,6 @@
 # Криптографічне дослідження — власні реалізації на C++
 
-Початок етапу 5. Наразі реалізовано навчальні прототипи Цезаря, моноалфавітної заміни, Віженера та Гілла 3×3, спільний SHA-256 і власний графік частот SVG. Решта методів реєстру — заплановані, **не реалізовані**. Це навчальний код, а не засіб захисту секретів.
+Етап 5 у роботі. Реалізовано десять навчальних прототипів: Цезар, моноалфавітна заміна, Віженер, Гілл 3×3, демонстраційна мережа Фейстеля, одноразовий блокнот XOR, Плейфер, Solitaire/Pontifex, решітка Флейснера та гомофонна заміна. Також є спільний SHA-256 і власний графік частот SVG. Стан кожної з 30 позицій наведено у [STATUS.md](STATUS.md). Це навчальний код, а не засіб захисту секретів.
 
 ## Навігація дослідження
 
@@ -8,7 +8,7 @@
 - [Реєстр методів](docs/research/etap_2_reiestr_shyfriv.md): 30 незмінних позицій і 27 карток, бо три пари позицій об'єднані в картки (№1+2, №7+15, №9+12). [Бібліографічна матриця](docs/research/etap_3_literatura_matrytsia.md) містить джерела й вектори для карток.
 - [ТЗ етапу 5](docs/SPEC_STAGE5.md) і [зафіксовані рішення](DECISIONS.md).
 - [Протокол корпусу](docs/research/etap_4_korpus_protokol.md), [картка перевірки](docs/corpus_stage4.md) та [незмінний ZIP-архів](etap_4_korpus.zip).
-- [Стан 30 позицій](STATUS.md), профілі [Цезаря](docs/profiles/caesar.md), [заміни](docs/profiles/substitution.md), [Віженера](docs/profiles/vigenere.md), [Гілла](docs/profiles/hill.md) і [збірка та тести](#збірка).
+- [Стан 30 позицій](STATUS.md), профілі [Цезаря](docs/profiles/caesar.md), [заміни](docs/profiles/substitution.md), [Віженера](docs/profiles/vigenere.md), [Гілла](docs/profiles/hill.md), [Фейстеля](docs/profiles/feistel_demo.md), [OTP](docs/profiles/otp.md), [Плейфера](docs/profiles/playfair.md), [Solitaire](docs/profiles/solitaire.md), [решітки](docs/profiles/grille.md), [гомофонної заміни](docs/profiles/homophonic.md) і [збірка та тести](#збірка).
 
 ## Збірка
 
@@ -55,6 +55,12 @@ python tests\test_docs_links.py
 ./build/cryptolab substitution encrypt --alphabet en --key-file key.txt --in input.txt --out result.txt --policy passthrough
 ./build/cryptolab vigenere encrypt --alphabet en --key-file key.txt --in input.txt --out result.txt
 ./build/cryptolab hill3 encrypt --alphabet en --key-file matrix.txt --in input.txt --out result.txt
+./build/cryptolab feistel-demo encrypt --key-file key.bin --in input.bin --out cipher.bin
+./build/cryptolab otp xor --key-file pad.bin --in input.bin --out cipher.bin
+./build/cryptolab playfair encrypt --alphabet en --key-file keyword.txt --in input.txt --out result.txt
+./build/cryptolab solitaire encrypt --alphabet en --key-file keyword.txt --in input.txt --out result.txt
+./build/cryptolab grille encrypt --alphabet en --key-file mask.txt --in input.txt --out result.txt
+./build/cryptolab homophonic encrypt --alphabet en --key-file codes.bin --in input.txt --out cipher.bin
 ./build/cryptolab sha256 hash --in input.bin --out digest.bin
 ```
 
@@ -90,7 +96,7 @@ python tests\test_corpus.py .\etap_4_korpus.zip .\build\cryptolab.exe
 4. Підключити CLI, осмислений корпусний запуск, трасування та потрібні власні SVG-графіки.
 5. Записати фактично виконані перевірки й відкриті обмеження у [STATUS.md](STATUS.md).
 
-Критерії закриття всіх 30 позицій наведено у [ТЗ етапу 5](docs/SPEC_STAGE5.md). Наявність чотирьох класичних прототипів не закриває етап.
+Критерії закриття всіх 30 позицій наведено у [ТЗ етапу 5](docs/SPEC_STAGE5.md). Наявність десяти прототипів не закриває етап.
 
 ## Межі першої версії
 
