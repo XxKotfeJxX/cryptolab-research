@@ -1,6 +1,7 @@
 #include "classic/caesar.hpp"
 #include "classic/feistel_demo.hpp"
 #include "classic/grille.hpp"
+#include "classic/homophonic.hpp"
 #include "classic/hill.hpp"
 #include "classic/playfair.hpp"
 #include "classic/substitution.hpp"
@@ -128,6 +129,15 @@ int main() {
         must_reject([&] { crypto::classic::grille(U"AB", en, U"0125", false); });
         must_reject([&] { crypto::classic::grille(U"ABCDEFGHIJKLMNOP", en, U"0000", false); });
         must_reject([&] { crypto::classic::grille(U"ABCDEFGHIJKLMNOP", en, U"012X", false); });
+        std::string homophonic_key;
+        for (int i = 0; i < 52; ++i) homophonic_key.push_back(static_cast<char>(i));
+        expect(crypto::classic::homophonic_encrypt(U"ABBA", en, homophonic_key) ==
+               std::string("\x00\x03\x02\x01", 4), "independent homophonic vector");
+        expect(crypto::classic::homophonic_decrypt(std::string("\x00\x03\x02\x01", 4), en, homophonic_key) ==
+               U"ABBA", "homophonic decrypt");
+        must_reject([&] { crypto::classic::homophonic_encrypt(U"A!", en, homophonic_key); });
+        must_reject([&] { crypto::classic::homophonic_decrypt(std::string(1, static_cast<char>(255)), en, homophonic_key); });
+        must_reject([&] { crypto::classic::homophonic_encrypt(U"A", en, std::string(52, '\0')); });
         const auto svg = crypto::viz::frequency_svg(U"ABBA", U"DEED", en);
         expect(svg.find("<svg") != std::string::npos && svg.find("Вхід: 4 літер") != std::string::npos, "svg counts");
         expect(crypto::viz::frequency_svg(U"A", U"B", en, "a&b<file").find("a&amp;b&lt;file") != std::string::npos,

@@ -1,6 +1,7 @@
 #include "classic/caesar.hpp"
 #include "classic/feistel_demo.hpp"
 #include "classic/grille.hpp"
+#include "classic/homophonic.hpp"
 #include "classic/hill.hpp"
 #include "classic/playfair.hpp"
 #include "classic/substitution.hpp"
@@ -52,6 +53,7 @@ void usage() {
                  "              cryptolab sha256 hash --in FILE --out FILE (32 байти)\n";
     std::cerr << "              cryptolab otp xor --in FILE --key-file FILE --out FILE (сирі байти)\n";
     std::cerr << "              cryptolab feistel-demo encrypt|decrypt --in FILE --key-file FILE --out FILE (сирі 16-бітні блоки)\n";
+    std::cerr << "              cryptolab homophonic encrypt|decrypt --alphabet en|uk --in FILE --key-file FILE --out FILE\n";
 }
 
 int hash_cli(int argc, char** argv) {
@@ -104,6 +106,37 @@ int keyed_binary_cli(int argc, char** argv) {
     std::cout << "Готово: " << (otp ? "OTP XOR" : "мережа Фейстеля") << ", " << output.size() << " байтів.\n";
     return 0;
 }
+int homophonic_cli(int argc, char** argv) {
+    const std::string operation = argc >= 3 ? argv[2] : "";
+    if (argc != 11 || (operation != "encrypt" && operation != "decrypt")) { usage(); return 2; }
+    std::string alphabet_name, input_path, key_path, output_path;
+    std::set<std::string> seen;
+    for (int i = 3; i < argc; i += 2) {
+        const std::string name = argv[i];
+        if (!seen.insert(name).second) throw std::invalid_argument("Повторений параметр: " + name);
+        if (name == "--alphabet") alphabet_name = argv[i + 1];
+        else if (name == "--in") input_path = argv[i + 1];
+        else if (name == "--key-file") key_path = argv[i + 1];
+        else if (name == "--out") output_path = argv[i + 1];
+        else throw std::invalid_argument("Невідомий параметр: " + name);
+    }
+    if ((alphabet_name != "en" && alphabet_name != "uk") || input_path.empty() ||
+        key_path.empty() || output_path.empty()) { usage(); return 2; }
+    if (crypto::core::same_file_or_path(input_path, output_path) ||
+        crypto::core::same_file_or_path(input_path, key_path) ||
+        crypto::core::same_file_or_path(key_path, output_path))
+        throw std::invalid_argument("Шляхи входу, ключа й виходу мають бути різними");
+    crypto::core::validate_output_path(output_path);
+    const auto& alphabet = alphabet_name == "en" ? crypto::core::alphabet_en() : crypto::core::alphabet_uk();
+    const auto input = crypto::core::read_binary(input_path);
+    const auto key = crypto::core::read_binary(key_path);
+    const auto output = operation == "encrypt" ?
+        crypto::classic::homophonic_encrypt(crypto::core::decode_utf8(input), alphabet, key) :
+        crypto::core::encode_utf8(crypto::classic::homophonic_decrypt(input, alphabet, key));
+    crypto::core::write_atomic(output_path, output);
+    std::cout << "Готово: гомофонна заміна, " << output.size() << " байтів.\n";
+    return 0;
+}
 }
 
 int main(int argc, char** argv) {
@@ -111,6 +144,7 @@ int main(int argc, char** argv) {
         if (argc >= 2 && std::string(argv[1]) == "sha256") return hash_cli(argc, argv);
         if (argc >= 2 && (std::string(argv[1]) == "otp" || std::string(argv[1]) == "feistel-demo"))
             return keyed_binary_cli(argc, argv);
+        if (argc >= 2 && std::string(argv[1]) == "homophonic") return homophonic_cli(argc, argv);
         if (argc < 4 || (std::string(argv[1]) != "caesar" && std::string(argv[1]) != "substitution" &&
                          std::string(argv[1]) != "vigenere" && std::string(argv[1]) != "hill3" &&
                          std::string(argv[1]) != "playfair" && std::string(argv[1]) != "grille") ||

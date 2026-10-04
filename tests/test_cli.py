@@ -187,4 +187,21 @@ with tempfile.TemporaryDirectory(prefix="cryptolab-cli-") as folder:
     assert result.returncode == 0, result.stderr
     assert output.read_text(encoding="ascii") == "ABCEMDFGNOIHPJKL"
 
-print("OK: CLI validation, atomic replacement, path aliases, classic vectors, Python ROT13/SHA-256/OTP, Feistel, Playfair, grille")
+    key.write_bytes(bytes(range(52)))
+    source.write_text("ABBA", encoding="ascii")
+    result = subprocess.run(
+        [str(executable), "homophonic", "encrypt", "--alphabet", "en",
+         "--key-file", str(key), "--in", str(source), "--out", str(output)],
+        capture_output=True, check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert output.read_bytes() == bytes([0, 3, 2, 1])
+    source.write_bytes(b"\xff")
+    result = subprocess.run(
+        [str(executable), "homophonic", "decrypt", "--alphabet", "en",
+         "--key-file", str(key), "--in", str(source), "--out", str(output)],
+        capture_output=True, check=False,
+    )
+    assert result.returncode != 0 and output.read_bytes() == bytes([0, 3, 2, 1])
+
+print("OK: CLI validation, atomic replacement, path aliases, classic vectors, Python ROT13/SHA-256/OTP, Feistel, Playfair, grille, homophonic")
