@@ -3,7 +3,7 @@ New-Item -ItemType Directory -Path build -Force | Out-Null
 $common = @(
     '-std=c++20', '-Wall', '-Wextra', '-Wpedantic', '-Werror', '-O2', '-Isrc',
     'src/core/utf8.cpp', 'src/core/alphabet.cpp', 'src/core/hex.cpp',
-    'src/core/files.cpp', 'src/core/sha256.cpp', 'src/classic/caesar.cpp',
+    'src/core/files.cpp', 'src/core/sha256.cpp', 'src/core/otp.cpp', 'src/classic/caesar.cpp',
     'src/classic/substitution.cpp', 'src/classic/vigenere.cpp',
     'src/classic/hill.cpp', 'src/viz/svg.cpp'
 )

@@ -6,6 +6,7 @@
 #include "core/error.hpp"
 #include "core/files.hpp"
 #include "core/hex.hpp"
+#include "core/otp.hpp"
 #include "core/sha256.hpp"
 #include "core/utf8.hpp"
 #include "viz/svg.hpp"
@@ -37,6 +38,10 @@ int main() {
         expect(crypto::core::encode_hex(hex_bytes) == "00afff", "hex encode");
         must_reject([] { crypto::core::decode_hex("0"); });
         must_reject([] { crypto::core::decode_hex("00 1f"); });
+        expect(crypto::core::otp_xor(std::string("\x00\xff", 2), std::string("\xff\x55", 2)) ==
+               std::string("\xff\xaa", 2), "OTP byte XOR");
+        expect(crypto::core::otp_xor("", "").empty(), "OTP empty");
+        must_reject([] { crypto::core::otp_xor("a", ""); });
         try {
             crypto::core::decode_hex("gg");
             throw std::runtime_error("missing typed hex error");

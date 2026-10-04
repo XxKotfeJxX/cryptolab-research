@@ -4,6 +4,7 @@
 #include "classic/vigenere.hpp"
 #include "core/alphabet.hpp"
 #include "core/files.hpp"
+#include "core/otp.hpp"
 #include "core/sha256.hpp"
 #include "core/utf8.hpp"
 #include "viz/svg.hpp"
@@ -42,6 +43,7 @@ void usage() {
                  "              cryptolab hill3 encrypt|decrypt --alphabet en|uk --key-file FILE "
                  "--in FILE --out FILE [--policy strict|passthrough] [--steps N|all] [--trace FILE] [--chart SVG]\n"
                  "              cryptolab sha256 hash --in FILE --out FILE (32 байти)\n";
+    std::cerr << "              cryptolab otp xor --in FILE --key-file FILE --out FILE (сирі байти)\n";
 }
 
 int hash_cli(int argc, char** argv) {
@@ -64,11 +66,37 @@ int hash_cli(int argc, char** argv) {
     std::cout << "Готово: SHA-256, 32 байти.\n";
     return 0;
 }
+int otp_cli(int argc, char** argv) {
+    if (argc != 9 || std::string(argv[2]) != "xor") { usage(); return 2; }
+    std::string input_path, key_path, output_path;
+    std::set<std::string> seen;
+    for (int i = 3; i < argc; i += 2) {
+        const std::string name = argv[i];
+        if (!seen.insert(name).second) throw std::invalid_argument("Повторений параметр: " + name);
+        if (name == "--in") input_path = argv[i + 1];
+        else if (name == "--key-file") key_path = argv[i + 1];
+        else if (name == "--out") output_path = argv[i + 1];
+        else throw std::invalid_argument("Невідомий параметр: " + name);
+    }
+    if (input_path.empty() || key_path.empty() || output_path.empty()) { usage(); return 2; }
+    if (crypto::core::same_file_or_path(input_path, output_path) ||
+        crypto::core::same_file_or_path(input_path, key_path) ||
+        crypto::core::same_file_or_path(key_path, output_path))
+        throw std::invalid_argument("Шляхи входу, ключа й виходу мають бути різними");
+    crypto::core::validate_output_path(output_path);
+    const auto input = crypto::core::read_binary(input_path);
+    const auto key = crypto::core::read_binary(key_path);
+    const auto output = crypto::core::otp_xor(input, key);
+    crypto::core::write_atomic(output_path, output);
+    std::cout << "Готово: OTP XOR, " << output.size() << " байтів.\n";
+    return 0;
+}
 }
 
 int main(int argc, char** argv) {
     try {
         if (argc >= 2 && std::string(argv[1]) == "sha256") return hash_cli(argc, argv);
+        if (argc >= 2 && std::string(argv[1]) == "otp") return otp_cli(argc, argv);
         if (argc < 4 || (std::string(argv[1]) != "caesar" && std::string(argv[1]) != "substitution" &&
                          std::string(argv[1]) != "vigenere" && std::string(argv[1]) != "hill3") ||
             (std::string(argv[2]) != "encrypt" && std::string(argv[2]) != "decrypt")) {
