@@ -4,7 +4,7 @@
 
 ## Навігація дослідження
 
-- **Дослідницьке питання:** як за визначеного сценарію використання змістовно порівняти криптографічні методи різних класів, поєднавши вимірювані витрати, вимоги та відомі гарантії? [Протокол дослідження](docs/research/research_protocol.md) визначає метод і межі висновків; [план](docs/research/plan_kryptohrafichnoho_doslidzhennia.md) описує етапи 0–12, а [загальні вимоги](docs/research/zahalni_vymohy_do_naukovoi_roboty.md) — правила підготовки наукової роботи.
+- **Дослідницьке питання:** як за визначеного сценарію використання змістовно порівняти криптографічні методи різних класів, поєднавши вимірювані витрати, вимоги та відомі гарантії? [Протокол дослідження](docs/research/research_protocol.md) визначає метод і межі висновків; [план](docs/research/plan_kryptohrafichnoho_doslidzhennia.md) описує етапи 0–12, [паспорт етапу 0](docs/research/etap_0_pasport.md) — організаційні правила, а [загальні вимоги](docs/research/zahalni_vymohy_do_naukovoi_roboty.md) — підготовку наукової роботи.
 - [Реєстр методів](docs/research/etap_2_reiestr_shyfriv.md): 30 незмінних позицій і 27 карток, бо три пари позицій об'єднані в картки (№1+2, №7+15, №9+12). [Бібліографічна матриця](docs/research/etap_3_literatura_matrytsia.md) містить джерела й вектори для карток.
 - [ТЗ етапу 5](docs/SPEC_STAGE5.md) і [зафіксовані рішення](DECISIONS.md).
 - [Протокол корпусу](docs/research/etap_4_korpus_protokol.md), [картка перевірки](docs/corpus_stage4.md) та [незмінний ZIP-архів](etap_4_korpus.zip).
