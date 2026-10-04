@@ -1,4 +1,5 @@
 #include "classic/caesar.hpp"
+#include "classic/feistel_demo.hpp"
 #include "classic/hill.hpp"
 #include "classic/substitution.hpp"
 #include "classic/vigenere.hpp"
@@ -44,6 +45,7 @@ void usage() {
                  "--in FILE --out FILE [--policy strict|passthrough] [--steps N|all] [--trace FILE] [--chart SVG]\n"
                  "              cryptolab sha256 hash --in FILE --out FILE (32 байти)\n";
     std::cerr << "              cryptolab otp xor --in FILE --key-file FILE --out FILE (сирі байти)\n";
+    std::cerr << "              cryptolab feistel-demo encrypt|decrypt --in FILE --key-file FILE --out FILE (сирі 16-бітні блоки)\n";
 }
 
 int hash_cli(int argc, char** argv) {
@@ -66,8 +68,12 @@ int hash_cli(int argc, char** argv) {
     std::cout << "Готово: SHA-256, 32 байти.\n";
     return 0;
 }
-int otp_cli(int argc, char** argv) {
-    if (argc != 9 || std::string(argv[2]) != "xor") { usage(); return 2; }
+int keyed_binary_cli(int argc, char** argv) {
+    const bool otp = std::string(argv[1]) == "otp";
+    const std::string operation = argc >= 3 ? argv[2] : "";
+    if (argc != 9 || (otp ? operation != "xor" : (operation != "encrypt" && operation != "decrypt"))) {
+        usage(); return 2;
+    }
     std::string input_path, key_path, output_path;
     std::set<std::string> seen;
     for (int i = 3; i < argc; i += 2) {
@@ -86,9 +92,10 @@ int otp_cli(int argc, char** argv) {
     crypto::core::validate_output_path(output_path);
     const auto input = crypto::core::read_binary(input_path);
     const auto key = crypto::core::read_binary(key_path);
-    const auto output = crypto::core::otp_xor(input, key);
+    const auto output = otp ? crypto::core::otp_xor(input, key) :
+        crypto::classic::feistel_demo(input, key, operation == "decrypt");
     crypto::core::write_atomic(output_path, output);
-    std::cout << "Готово: OTP XOR, " << output.size() << " байтів.\n";
+    std::cout << "Готово: " << (otp ? "OTP XOR" : "мережа Фейстеля") << ", " << output.size() << " байтів.\n";
     return 0;
 }
 }
@@ -96,7 +103,8 @@ int otp_cli(int argc, char** argv) {
 int main(int argc, char** argv) {
     try {
         if (argc >= 2 && std::string(argv[1]) == "sha256") return hash_cli(argc, argv);
-        if (argc >= 2 && std::string(argv[1]) == "otp") return otp_cli(argc, argv);
+        if (argc >= 2 && (std::string(argv[1]) == "otp" || std::string(argv[1]) == "feistel-demo"))
+            return keyed_binary_cli(argc, argv);
         if (argc < 4 || (std::string(argv[1]) != "caesar" && std::string(argv[1]) != "substitution" &&
                          std::string(argv[1]) != "vigenere" && std::string(argv[1]) != "hill3") ||
             (std::string(argv[2]) != "encrypt" && std::string(argv[2]) != "decrypt")) {

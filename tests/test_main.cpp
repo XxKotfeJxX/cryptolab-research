@@ -1,4 +1,5 @@
 #include "classic/caesar.hpp"
+#include "classic/feistel_demo.hpp"
 #include "classic/hill.hpp"
 #include "classic/substitution.hpp"
 #include "classic/vigenere.hpp"
@@ -42,6 +43,13 @@ int main() {
                std::string("\xff\xaa", 2), "OTP byte XOR");
         expect(crypto::core::otp_xor("", "").empty(), "OTP empty");
         must_reject([] { crypto::core::otp_xor("a", ""); });
+        const std::string feistel_plain("\x12\x34", 2), feistel_key("\x01\x02\x03\x04", 4);
+        expect(crypto::classic::feistel_demo(feistel_plain, feistel_key, false) ==
+               std::string("\xf9\x37", 2), "independent Feistel demo vector");
+        expect(crypto::classic::feistel_demo(std::string("\xf9\x37", 2), feistel_key, true) ==
+               feistel_plain, "Feistel inverse");
+        must_reject([&] { crypto::classic::feistel_demo("x", feistel_key, false); });
+        must_reject([] { crypto::classic::feistel_demo("", "123", false); });
         try {
             crypto::core::decode_hex("gg");
             throw std::runtime_error("missing typed hex error");
