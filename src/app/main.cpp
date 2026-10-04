@@ -1,6 +1,7 @@
 #include "classic/caesar.hpp"
 #include "classic/feistel_demo.hpp"
 #include "classic/hill.hpp"
+#include "classic/playfair.hpp"
 #include "classic/substitution.hpp"
 #include "classic/vigenere.hpp"
 #include "core/alphabet.hpp"
@@ -43,6 +44,8 @@ void usage() {
                  "--in FILE --out FILE [--policy strict|passthrough] [--steps N|all] [--trace FILE] [--chart SVG]\n"
                  "              cryptolab hill3 encrypt|decrypt --alphabet en|uk --key-file FILE "
                  "--in FILE --out FILE [--policy strict|passthrough] [--steps N|all] [--trace FILE] [--chart SVG]\n"
+                 "              cryptolab playfair encrypt|decrypt --alphabet en --key-file FILE "
+                 "--in FILE --out FILE [--steps N|all] [--trace FILE] [--chart SVG]\n"
                  "              cryptolab sha256 hash --in FILE --out FILE (32 байти)\n";
     std::cerr << "              cryptolab otp xor --in FILE --key-file FILE --out FILE (сирі байти)\n";
     std::cerr << "              cryptolab feistel-demo encrypt|decrypt --in FILE --key-file FILE --out FILE (сирі 16-бітні блоки)\n";
@@ -106,14 +109,16 @@ int main(int argc, char** argv) {
         if (argc >= 2 && (std::string(argv[1]) == "otp" || std::string(argv[1]) == "feistel-demo"))
             return keyed_binary_cli(argc, argv);
         if (argc < 4 || (std::string(argv[1]) != "caesar" && std::string(argv[1]) != "substitution" &&
-                         std::string(argv[1]) != "vigenere" && std::string(argv[1]) != "hill3") ||
+                         std::string(argv[1]) != "vigenere" && std::string(argv[1]) != "hill3" &&
+                         std::string(argv[1]) != "playfair") ||
             (std::string(argv[2]) != "encrypt" && std::string(argv[2]) != "decrypt")) {
             usage(); return 2;
         }
         const bool is_substitution = std::string(argv[1]) == "substitution";
         const bool is_vigenere = std::string(argv[1]) == "vigenere";
         const bool is_hill = std::string(argv[1]) == "hill3";
-        const bool uses_key_file = is_substitution || is_vigenere || is_hill;
+        const bool is_playfair = std::string(argv[1]) == "playfair";
+        const bool uses_key_file = is_substitution || is_vigenere || is_hill || is_playfair;
         const bool decrypt = std::string(argv[2]) == "decrypt";
         std::string alphabet_name, input_path, output_path, key_path, policy_name = "strict", chart_path, trace_path;
         long long shift = 0;
@@ -150,6 +155,8 @@ int main(int argc, char** argv) {
         }
         if (policy_name != "strict" && policy_name != "passthrough")
             throw std::invalid_argument("Політика має бути strict або passthrough");
+        if (is_playfair && (alphabet_name != "en" || policy_name != "strict"))
+            throw std::invalid_argument("Плейфер має лише профіль en/strict");
         if (!trace_path.empty() && !trace) throw std::invalid_argument("Для --trace потрібно вказати --steps");
         const std::string paths[] = {input_path, output_path, key_path, chart_path, trace_path};
         for (std::size_t i = 0; i < 5; ++i)
@@ -177,6 +184,7 @@ int main(int argc, char** argv) {
         if (is_substitution) output = crypto::classic::substitution(input, alphabet, key, decrypt, policy, step);
         else if (is_vigenere) output = crypto::classic::vigenere(input, alphabet, key, decrypt, policy, step);
         else if (is_hill) output = crypto::classic::hill3(input, alphabet, key, decrypt, policy, step);
+        else if (is_playfair) output = crypto::classic::playfair(input, key, decrypt, step);
         else output = crypto::classic::caesar(input, alphabet, shift, decrypt, policy, step);
         const auto encoded = crypto::core::encode_utf8(output);
         const auto chart = chart_path.empty() ? std::string{} : crypto::viz::frequency_svg(

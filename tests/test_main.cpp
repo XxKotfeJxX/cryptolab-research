@@ -1,6 +1,7 @@
 #include "classic/caesar.hpp"
 #include "classic/feistel_demo.hpp"
 #include "classic/hill.hpp"
+#include "classic/playfair.hpp"
 #include "classic/substitution.hpp"
 #include "classic/vigenere.hpp"
 #include "core/alphabet.hpp"
@@ -111,6 +112,14 @@ int main() {
         must_reject([&] { crypto::classic::hill3(U"AC", en, U"GYBNQKURP", false, InputPolicy::strict); });
         must_reject([&] { crypto::classic::hill3(U"ACT", en, U"AAAAAAAAA", false, InputPolicy::strict); });
         must_reject([&] { crypto::classic::hill3(U"ACT", en, U"GYBNQKUR", false, InputPolicy::strict); });
+        expect(crypto::classic::playfair(U"HIDETHEGOLDINTHETREESTUMP", U"PLAYFAIREXAMPLE", false) ==
+               U"BMODZBXDNABEKUDMUIXMMOUVIF", "published Playfair vector");
+        expect(crypto::classic::playfair(U"BMODZBXDNABEKUDMUIXMMOUVIF", U"PLAYFAIREXAMPLE", true) ==
+               U"HIDETHEGOLDINTHETREXESTUMP", "Playfair prepared plaintext");
+        expect(crypto::classic::playfair(U"XX", U"MONARCHY", false).size() == 4, "Playfair repeat-X filler");
+        must_reject([] { crypto::classic::playfair(U"ABC", U"MONARCHY", true); });
+        must_reject([] { crypto::classic::playfair(U"A!", U"MONARCHY", false); });
+        must_reject([] { crypto::classic::playfair(U"AB", U"", false); });
         const auto svg = crypto::viz::frequency_svg(U"ABBA", U"DEED", en);
         expect(svg.find("<svg") != std::string::npos && svg.find("Вхід: 4 літер") != std::string::npos, "svg counts");
         expect(crypto::viz::frequency_svg(U"A", U"B", en, "a&b<file").find("a&amp;b&lt;file") != std::string::npos,
